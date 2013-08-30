@@ -90,7 +90,8 @@ Optional:
        REGULAR   # http://s3.amazonaws.com/bucket/key
        SUBDOMAIN # http://bucket.s3.amazonaws.com/key
        VANITY    # http://<vanity_domain>/key  
-   AWS_SECURITY_TOKEN - If authenticating via IAM set this to the value of the security token
+   AWS_SECURITY_TOKEN - If authenticating via IAM
+                        set this to the value of the security token
 
 Important: For EU-located buckets you should set the calling format to SUBDOMAIN
 Important: For US buckets with CAPS or other weird traits set the calling format 
