@@ -136,11 +136,12 @@ module S3
   class AWSAuthConnection
     attr_accessor :calling_format
     
-    def initialize(aws_access_key_id, aws_secret_access_key, is_secure=true,
+    def initialize(aws_access_key_id, aws_secret_access_key, aws_security_token=nil, is_secure=true,
                    server=DEFAULT_HOST, port=PORTS_BY_SECURITY[is_secure],
                    calling_format=CallingFormat::REGULAR)
       @aws_access_key_id = aws_access_key_id
       @aws_secret_access_key = aws_secret_access_key
+      @aws_security_token = aws_security_token
       @server = server
       @is_secure = is_secure
       @calling_format = calling_format
@@ -260,7 +261,7 @@ end
         set_headers(req, headers)
         set_headers(req, metadata, METADATA_PREFIX)
 
-        set_aws_auth_header(req, @aws_access_key_id, @aws_secret_access_key, bucket, key, path_args)
+        set_aws_auth_header(req, @aws_access_key_id, @aws_secret_access_key, @aws_security_token, bucket, key, path_args)
         if req.request_body_permitted?
           return http.request(req, data)
         else
@@ -285,7 +286,7 @@ end
     end
 
     # set the Authorization header using AWS signed header authentication
-    def set_aws_auth_header(request, aws_access_key_id, aws_secret_access_key, bucket='', key='', path_args={})
+    def set_aws_auth_header(request, aws_access_key_id, aws_secret_access_key, aws_security_token, bucket='', key='', path_args={})
       # we want to fix the date here if it's not already been done.
       request['Date'] ||= Time.now.httpdate
 
@@ -294,6 +295,9 @@ end
       # an empty content-type header becomes semantically meaningful for any
       # other verb.
       request['Content-Type'] ||= ''
+
+      # If authenticating via IAM, supply the temporary security token
+      request['x-amz-security-token'] = aws_security_token if aws_security_token
 
       canonical_string =
         S3.canonical_string(request.method, bucket, key, path_args, request.to_hash, nil)
@@ -324,11 +328,12 @@ end
     # by default, expire in 1 minute
     DEFAULT_EXPIRES_IN = 60
 
-    def initialize(aws_access_key_id, aws_secret_access_key, is_secure=true, 
+    def initialize(aws_access_key_id, aws_secret_access_key, aws_security_token=nil, is_secure=true, 
                    server=DEFAULT_HOST, port=PORTS_BY_SECURITY[is_secure], 
                    format=CallingFormat::REGULAR)
       @aws_access_key_id = aws_access_key_id
       @aws_secret_access_key = aws_secret_access_key
+      @aws_security_token = aws_security_token
       @protocol = is_secure ? 'https' : 'http'
       @server = server
       @port = port

@@ -80,8 +80,8 @@ module S3
       set_headers(req, metadata, METADATA_PREFIX)
       set_headers(req, {'Connection' => 'keep-alive', 'Keep-Alive' => '300'})
       
-      set_aws_auth_header(req, @aws_access_key_id, @aws_secret_access_key, bucket, key, path_args)
-      
+      set_aws_auth_header(req, @aws_access_key_id, @aws_secret_access_key, @aws_security_token, bucket, key, path_args)
+ 
       http = $S3syncHttp
       
       if req.request_body_permitted?

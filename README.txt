@@ -90,6 +90,7 @@ Optional:
        REGULAR   # http://s3.amazonaws.com/bucket/key
        SUBDOMAIN # http://bucket.s3.amazonaws.com/key
        VANITY    # http://<vanity_domain>/key  
+   AWS_SECURITY_TOKEN - If authenticating via IAM set this to the value of the security token
 
 Important: For EU-located buckets you should set the calling format to SUBDOMAIN
 Important: For US buckets with CAPS or other weird traits set the calling format 
@@ -401,6 +402,12 @@ Added option --no-md5
 2008-06-16
 Version 1.2.6
 Catch connect errors and retry.
+----------
+
+2013-08-30
+Version ??
+Added AWS IAM authentication handling
+via the AWS_SECURITY_TOKEN environment variable.
 ----------
 
 FNORD

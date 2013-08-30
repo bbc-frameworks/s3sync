@@ -11,6 +11,7 @@ module S3sync
   
   $AWS_ACCESS_KEY_ID = ENV["AWS_ACCESS_KEY_ID"]           
   $AWS_SECRET_ACCESS_KEY = ENV["AWS_SECRET_ACCESS_KEY"]   
+  $AWS_SECURITY_TOKEN = ENV["AWS_SECURITY_TOKEN"]
   $AWS_S3_HOST = (ENV["AWS_S3_HOST"] or "s3.amazonaws.com")
   $HTTP_PROXY_HOST = ENV["HTTP_PROXY_HOST"]
   $HTTP_PROXY_PORT = ENV["HTTP_PROXY_PORT"]
@@ -40,7 +41,7 @@ module S3sync
     
     # ---------- CONNECT ---------- #
     
-    $S3syncConnection = S3::AWSAuthConnection.new($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $S3syncOptions['--ssl'], $AWS_S3_HOST)
+    $S3syncConnection = S3::AWSAuthConnection.new($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $AWS_SECURITY_TOKEN, $S3syncOptions['--ssl'], $AWS_S3_HOST)
     $S3syncConnection.calling_format = S3::CallingFormat::string_to_format($AWS_CALLING_FORMAT)
     if $S3syncOptions['--ssl']
       if $SSL_CERT_DIR
@@ -53,7 +54,7 @@ module S3sync
     end
   end
   def S3sync.s3urlSetup 	
-    $S3syncGenerator = S3::QueryStringAuthGenerator.new($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $S3syncOptions['--ssl'], $AWS_S3_HOST)
+    $S3syncGenerator = S3::QueryStringAuthGenerator.new($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $AWS_SECURITY_TOKEN, $S3syncOptions['--ssl'], $AWS_S3_HOST)
     $S3syncGenerator.calling_format = S3::CallingFormat::string_to_format($AWS_CALLING_FORMAT)
     $S3syncGenerator.expires_in = $S3syncOptions['--expires-in']
   end
